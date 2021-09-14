@@ -10,15 +10,15 @@ namespace Journal_Opgave
 {
     class Dal
     {
-        private string pathway = @".\HealthClinic";
-
         // ctor
         public Dal() { }
+
+        //private string pathway = @".\HealthClinic";
 
         public bool JournalCreator(string[] jInfo) 
         {
             // Creates a folder, does nothing if folder by that name already exists
-            Directory.CreateDirectory(pathway);
+            Directory.CreateDirectory(@".\HealthClinic");
 
             string cpr = jInfo[2];
 
@@ -27,12 +27,11 @@ namespace Journal_Opgave
             //Could be used when creating a folder and file, so the program doesn't break
             try
             {
-                // Creates a folder and a .txt file with the persons cpr as name
-                patientFile = new FileStream(pathway + @"\" + cpr + ".txt", FileMode.CreateNew);
+                // Creates a .txt file with the persons cpr as name
+                patientFile = new FileStream(@".\HealthClinic" + cpr + ".txt", FileMode.CreateNew);
             }
             catch (IOException)
             {
-                Console.WriteLine("File error");
                 return false;
             }
 
@@ -43,7 +42,7 @@ namespace Journal_Opgave
                 writer.WriteLine(jInfo[i]);
             }
 
-            writer.WriteLine("--------------------------------------------");
+            writer.WriteLine("\n--------------------------------------------\n");
 
             writer.Close();
 
@@ -53,7 +52,7 @@ namespace Journal_Opgave
         public void AddToFile(string cpr, JournalEntry entry)
         {
             // Allows us to add to the bottom of an existing file
-            StreamWriter writer = new StreamWriter(new FileStream(pathway + @"\" + cpr + ".txt", FileMode.Append));
+            StreamWriter writer = new StreamWriter(new FileStream(@".\HealthClinic" + cpr + ".txt", FileMode.Append));
 
             writer.WriteLine($"{entry.TimeOfDay.ToString("yyyy/MM/dd HH:mm")} - {entry.DoctorName} - {entry.Description}");
 
@@ -66,11 +65,10 @@ namespace Journal_Opgave
             StreamReader reader;
             try
             {
-                reader = new StreamReader(new FileStream(pathway + @"\" + cpr + ".txt", FileMode.Open));
+                reader = new StreamReader(new FileStream(@".\HealthClinic" + cpr + ".txt", FileMode.Open));
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine("File not found");
                 throw;
             }
 

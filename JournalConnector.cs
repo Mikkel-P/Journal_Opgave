@@ -13,7 +13,7 @@ namespace Journal_Opgave
         // ctor
         public JournalConnector() { }
 
-        public void JournalCreation(string [] jInfo) 
+        public void JournalCreation(string[] jInfo)
         {
             currentJournal = new Journal(jInfo);
         }
@@ -53,7 +53,7 @@ namespace Journal_Opgave
             journalInfo = new string[6];
             entries = Array.Empty<string>();
 
-            List<string> entryList = new List<string>();            
+            List<string> entryList = new List<string>();
 
             for (int i = 0; i < fileContent.Length; i++)
             {
@@ -69,145 +69,183 @@ namespace Journal_Opgave
             entries = entryList.ToArray();
         }
 
+        #region Age methods
         public string AgeCalculator(string cpr)
         {
-            #region CPR Breakdown
+            #region CPR Conversion
+
             // Splits the string into a char array
             char[] cprCalc = cpr.ToCharArray();
             {
+                // Saves index 4, 5 and 6 as char variables so they can be manipulated
                 char num5 = cprCalc[4];
                 char num6 = cprCalc[5];
+                char num7 = cprCalc[6];
 
-                char test3 = (char)(num5 + num6);
+                // Converts char num5 and char num6 to strings 
+                string convert1 = Convert.ToString(num5);
+                string convert2 = Convert.ToString(num6);
 
-                if (test3 < 37)
+                // Melts the two strings into one
+                string putTogether = convert1 + convert2;
+
+                // Converts the putTogether string and num7 to integers so we can use them in calculations
+                int finalCalc1 = Convert.ToInt32(putTogether);
+                int finalCalc2 = Convert.ToInt32(num7);
+                #endregion
+
+                #region CPR Calculation
+                // The 3 numbers we broke the cpr string down to lets us determine
+                // whether a person is for example 104 or 4 years old since the cpr
+                // only saves the last 2 digits of the actual birthyear, we can
+                // calculate the actual birthyear with the 5th, 6th and 7th digit.
+                // When the calculation has been done it adds the result to the
+                // char array cprCalc.
+                if (finalCalc1 < 37)
                 {
-                    if (cprCalc[6] < 4)
+                    if (finalCalc2 < 4)
                     {
+                        cprCalc[6] = (char)1;
                         // 1900-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
-                    else if (cprCalc[6] == 4)
+                    else if (finalCalc2 == 4)
                     {
                         // 2000-2036
-                        cprCalc.Append<char>(Convert.ToChar(2));
-                        cprCalc.Append<char>(Convert.ToChar(0));
+                        cprCalc[6] = (char)2;
+                        cprCalc[7] = (char)0;
                     }
-                    else if (cprCalc[6] > 4)
+                    else if (finalCalc2 > 4)
                     {
                         // 2000-2057
-                        cprCalc.Append<char>(Convert.ToChar(2));
-                        cprCalc.Append<char>(Convert.ToChar(0));
+                        cprCalc[6] = (char)2;
+                        cprCalc[7] = (char)0;
                     }
-                    else if (cprCalc[6] == 9)
+                    else if (finalCalc2 == 9)
                     {
                         // 2000-2036
-                        cprCalc.Append<char>(Convert.ToChar(2));
-                        cprCalc.Append<char>(Convert.ToChar(0));
+                        cprCalc[6] = (char)2;
+                        cprCalc[7] = (char)0;
                     }
                 }
-
-                else if (test3 > 36 && test3 < 58)
+                else if (finalCalc1 > 36 && finalCalc1 < 58)
                 {
-                    if (cprCalc[6] < 4)
+                    if (finalCalc2 < 4)
                     {
                         // 1900-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
-                    else if (cprCalc[6] == 4)
+                    else if (finalCalc2 == 4)
                     {
                         // 1937-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
-                    else if (cprCalc[6] > 4)
+                    else if (finalCalc2 > 4)
                     {
                         // 2000-2057
                     }
-                    else if (cprCalc[6] == 9)
+                    else if (finalCalc2 == 9)
                     {
                         // 1937-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
                 }
-
-                else if (test3 > 57)
+                else if (finalCalc1 > 57)
                 {
-                    if (cprCalc[6] < 4)
+                    if (finalCalc2 < 4)
                     {
                         // 1900-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
-                    else if (cprCalc[6] == 4)
+                    else if (finalCalc2 == 4)
                     {
                         // 1937-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
-                    else if (cprCalc[6] > 4)
+                    else if (finalCalc2 > 4)
                     {
                         // 1858-1899
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(8));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)8;
                     }
-                    else if (cprCalc[6] == 9)
+                    else if (finalCalc2 == 9)
                     {
                         // 1937-1999
-                        cprCalc.Append<char>(Convert.ToChar(1));
-                        cprCalc.Append<char>(Convert.ToChar(9));
+                        cprCalc[6] = (char)1;
+                        cprCalc[7] = (char)9;
                     }
                 }
+                #endregion
+
+                #region CPR Rebuild
+                // Assigns the selected indexes of the char array cprCalc
+                // to char variables to manipulate them further
+                char c1 = cprCalc[0];
+                char c2 = cprCalc[1];
+                char c3 = cprCalc[2];
+                char c4 = cprCalc[3];
+                char c5 = cprCalc[4];
+                char c6 = cprCalc[5];
+                char c7 = cprCalc[6];
+                char c8 = cprCalc[7];
+
+                // Puts the specified char's back together into a string in the chosen order
+                string exactBirthDate = Convert.ToString(c1 + c2 + c3 + c4 + c7 + c8 + c5 + c6);
+
+                // Returns the cpr with the full birthyear, in a regular date format
+                // so it can be used for comparison later
+                return exactBirthDate;
+                #endregion
             }
-            #endregion
-
-            #region CPR Rebuild
-            char c1 = cprCalc[0];
-            char c2 = cprCalc[1];
-            char c3 = cprCalc[2];
-            char c4 = cprCalc[3];
-            char c5 = cprCalc[4];
-            char c6 = cprCalc[5];
-            char c7 = cprCalc[10];
-            char c8 = cprCalc[11];
-
-            string cprResult = Convert.ToString(c1 + c2 + c3 + c4 + c7 + c8 + c5 + c6);
-
-            // Returns the cpr with the full birthyear, and without the usual final four numbers
-            return cprResult;
-            #endregion
         }
 
         public string[] AgeComparer(string cpr)
         {
+            // String that copies the return of the AgeCalculator method
             string birthDate = AgeCalculator(cpr);
 
-            DateTime birth = DateTime.ParseExact(birthDate, "ddMMyyyy", null);
-            DateTime today = DateTime.Now;
+            // DateTime variable from the string we received from the AgeCalculator method
+            DateTime birth = DateTime.ParseExact(birthDate, "dd-MM-yyyy", null);
 
-            DateTime thisBDay = new DateTime(today.Year, birth.Month, birth.Day);
+            // DateTime variable with the current date and time
+            DateTime current = DateTime.Now;
 
-            int years = today.Year - birth.Year;
-            int days = today.DayOfYear - thisBDay.DayOfYear;
+            // DateTime variable that seperates year, month and day to integers so it can be manipulated
+            DateTime thisBDay = new DateTime(current.Year, birth.Month, birth.Day);
 
-            int comparer = DateTime.Compare(today.Date, thisBDay.Date);
+            // Subtracts the current year from the given birth date and saves it to an int variable
+            int years = current.Year - birth.Year;
 
-            // If birthday is later this year, subtract one year, and add 365 to get age in years and amount of days in curent year
+            // Subtracts the current day from the given birth day and saves it to an int variable
+            int days = current.DayOfYear - thisBDay.DayOfYear;
+
+            // Compares the integer variables years and days and returns a -1, 0 or 1 integer
+            // which tells us whether the first instance is before, on or after the given date
+            int comparer = DateTime.Compare(current.Date, thisBDay.Date);
+
+            // If birthday is later this year, subtract one year, and add 365
+            // to get the age in amount of years and days in current year
             if (comparer < 0)
             {
                 years -= 1;
                 days = 365 + days;
             }
 
+            // String array with two indexes
             string[] ageResult = new string[2];
 
+            // Converts and saves our final results to the string array
             ageResult[0] = days.ToString();
             ageResult[1] = years.ToString();
 
             return ageResult;
         }
+        #endregion
     }
 }

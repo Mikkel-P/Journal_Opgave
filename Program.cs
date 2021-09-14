@@ -31,8 +31,8 @@ namespace Journal_Opgave
         public void Controller()
         {
             // Bool to control the menu
-            bool showMenu = true;
-            while (showMenu)
+            bool startMenu = true;
+            while (startMenu)
             {
                 Console.Clear();
                 Console.WriteLine("==================================================");
@@ -43,28 +43,35 @@ namespace Journal_Opgave
                 Console.WriteLine("3. Exit");
                 Console.Write("\r\nEnter a number: ");
 
+                // Switch case for each menu point
                 switch (Console.ReadLine())
                 {
+                    // Creates and loads a journal
                     case "1":
                         CreateJ();
-                        LoadJ();
                         break;
+                    // Brings forth another menu
                     case "2":
                         journalMenu();
                         break;
+                    // Exits the program
                     case "3":
-                        showMenu = false;
+                        startMenu = false;
                         break;
                     default:
                         break;
                 }
             }
         }
-                
+        
+        /// <summary>
+        /// Creates
+        /// </summary>
         public void CreateJ()
         {
             Console.Clear();
 
+            // Collects the user input and saves it to a string
             Console.Write("Name: ");
             string name = Console.ReadLine();
 
@@ -83,8 +90,10 @@ namespace Journal_Opgave
             Console.Write("Preferred doctor: ");
             string prefDoctor = Console.ReadLine();
 
+            // Creates a string array with 6 indexes
             string[] journalDetails = new string[6];
 
+            // Assigns the earlier collected strings to the newly created string array
             journalDetails[0] = name;
             journalDetails[1] = address;
             journalDetails[2] = cpr;
@@ -92,6 +101,7 @@ namespace Journal_Opgave
             journalDetails[4] = phone;
             journalDetails[5] = prefDoctor;
             
+            // We call our manager class method CreateJournalFile and send our string array to it
             manager.CreateJournalFile(journalDetails);
 
             LoadJ();
@@ -111,14 +121,14 @@ namespace Journal_Opgave
             Console.Write("Name of doctor: ");
             string doctorName = Console.ReadLine();
 
-            Console.Write("Write 'END' when done\n Entry description: ");
+            Console.Write("Write 'EXIT' in all caps when done\nEntry description: ");
             string description = string.Empty;
 
 
             while (true)
             {
                 string line = Console.ReadLine();
-                if (line.Equals("END"))
+                if (line.Equals("EXIT"))
                 {
                     break;
                 }

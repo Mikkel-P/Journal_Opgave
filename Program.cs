@@ -14,7 +14,7 @@ namespace Journal_Opgave
             // Creates an instance of the System class
             System sys = new System();
             // We call our controller method from our System class
-            sys.Controller();
+            sys.StartMenu();
         }
     }
 
@@ -25,10 +25,11 @@ namespace Journal_Opgave
         Manager manager = new Manager();
 
         #region Public methods
+
         /// <summary>
         /// The GUI's start menu
         /// </summary>
-        public void Controller()
+        public void StartMenu()
         {
             // Bool to control the menu
             bool startMenu = true;
@@ -46,13 +47,13 @@ namespace Journal_Opgave
                 // Switch case for each menu point
                 switch (Console.ReadLine())
                 {
-                    // Creates and loads a journal
+                    // Creates a journal
                     case "1":
                         CreateJ();
                         break;
-                    // Brings forth another menu
+                    // Loads a journal
                     case "2":
-                        journalMenu();
+                        LoadInterface();
                         break;
                     // Exits the program
                     case "3":
@@ -65,7 +66,19 @@ namespace Journal_Opgave
         }
 
         /// <summary>
-        /// Creates
+        /// To load a journal we need a string with a cpr, and check
+        /// if we have a matching .txt file with that filename
+        /// </summary>
+        public void LoadInterface()
+        {
+            Console.Clear();
+            Console.WriteLine("CPR: ");
+            string cpr = Console.ReadLine();
+            LoadJ(cpr);
+        }
+
+        /// <summary>
+        /// Saves the user inputs as seperate strings, then creates a string array, that can be put into the Journal object
         /// </summary>
         public void CreateJ()
         {
@@ -104,27 +117,35 @@ namespace Journal_Opgave
             // We call our manager class method CreateJournalFile and send our string array to it
             manager.CreateJournalFile(journalDetails);
 
-            LoadJ(cpr);
+            Console.WriteLine("\nJournal was succesfully created. Press 'ENTER' to return to main menu.");
+            Console.ReadLine();
         }
 
+        /// <summary>
+        /// Saves the user inputs as seperate strings, afterwards sends it to the Manager class method CreateEntry
+        /// </summary>
         public void CreateE()
         {
             Console.Clear();
 
+            // Writes the current date and time to the console
             Console.WriteLine(DateTime.Now.ToString("yyyy/MM/dd HH:mm"));
 
-            Console.Write("CPR: ");
+            Console.Write("Patient's CPR: ");
             string cpr = Console.ReadLine();
 
+            // Calls on the Manager class method LoadJournalFile and sends the cpr string to it
+            // so we can identify the correct filename
             manager.LoadJournalFile(cpr);
 
-            Console.Write("Name of doctor: ");
+            Console.Write("Name of responsible doctor: ");
             string doctorName = Console.ReadLine();
 
-            Console.Write("Write 'EXIT' in all caps when done\nEntry description: ");
+            Console.Write("Write 'EXIT' in all caps when done\nEntry description: \n");
             string description = string.Empty;
 
-
+            // Checks if the user input equals EXIT, breaks out of the loop if it is
+            // allows the user to use enter to get several lines of text
             while (true)
             {
                 string line = Console.ReadLine();
@@ -132,12 +153,20 @@ namespace Journal_Opgave
                 {
                     break;
                 }
+                // Adds the line string to the description string, and adds a new line to the console window
                 description += line + "\n";
             }
 
+            // Calls on the Manager class method CreateEntry and sends the just created strings to it
             manager.CreateEntry(cpr, doctorName, description);
         }
 
+        /// <summary>
+        /// Sends a string called cpr to the Manager class method LoadJournalFile, which returns a Journal object which
+        /// is used to show both journal info and a single entry, and checks for specific key presses for menu navigation
+        /// </summary>
+        /// <param name="cpr"></param>
+        /// <param name="indexer"></param>
         public void LoadJ(string cpr = "", int indexer = 0)
         {
             if (cpr == "")
@@ -146,22 +175,17 @@ namespace Journal_Opgave
                 cpr = Console.ReadLine();
             }
 
-            Journal JournalViewer = manager.LoadJournalFile(cpr);
+            Journal journalViewer = manager.LoadJournalFile(cpr);
 
-            ShowJournal(JournalViewer);
-            ShowEntry(JournalViewer, indexer);
+            ShowJournal(journalViewer);
+            ShowEntry(journalViewer, indexer);
             CheckKeyPress(cpr, indexer);
-            Console.ReadLine();
         }
 
-        public void journalMenu()
-        {
-            Console.Clear();
-            Console.WriteLine("CPR: ");
-            string cpr = Console.ReadLine();
-            LoadJ(cpr);
-        }
-
+        /// <summary>
+        /// Displays journal information residing in the showInfo Journal object
+        /// </summary>
+        /// <param name="showInfo"></param>
         public void ShowJournal(Journal showInfo)
         {
             Console.Clear();
@@ -174,16 +198,23 @@ namespace Journal_Opgave
             Console.WriteLine("--------------------------------------------");
         }
 
-        public void ShowEntry(Journal entryViewer, int e)
+        /// <summary>
+        /// Displays entry information residing in the showInfo Journal object
+        /// </summary>
+        /// <param name="entryViewer"></param>
+        /// <param name="e"></param>
+        public void ShowEntry(Journal entryViewer, int indexer)
         {
-            if (entryViewer != null && 0 < entryViewer.JEntry.Count)
+            // Checks whether any entries reside in the entryViewer Journal object
+            if (entryViewer != null && entryViewer.JEntry.Count > 0)
             {
+                // 
                 List<JournalEntry> showEntries = entryViewer.JEntry;
 
-                if (e < showEntries.Count && e >= 0)
+                if (indexer < showEntries.Count && indexer >= 0)
                 {
-                    Console.WriteLine($"Doctor: {showEntries[e].DoctorName} - Date: {showEntries[e].TimeOfDay}");
-                    Console.WriteLine($"Description: {showEntries[e].Description}");
+                    Console.WriteLine($"Doctor: {showEntries[indexer].DoctorName} - Date: {showEntries[indexer].TimeOfDay}");
+                    Console.WriteLine($"Description: {showEntries[indexer].Description}");
                 }
             }
             else
@@ -192,23 +223,36 @@ namespace Journal_Opgave
             }
             Console.WriteLine("-----------------------------------------------");
 
-            Console.Write("Press 'ENTER' key to create a new entry.\nPress 'RIGHT ARROW' key to navigate to next journal entry\nPress 'LEFT ARROW' key to navigate to previous journal entry\nPress 'ESC' key to go to previous menu.\n");
+            Console.Write
+                ("Press 'ENTER' key to create a new entry.\n" +
+                 "Press 'RIGHT ARROW' key to navigate to next journal entry\n" +
+                 "Press 'LEFT ARROW' key to navigate to previous journal entry\n" +
+                 "Press 'ESC' key to go to previous menu.\n");
 
         }
 
+        /// <summary>
+        /// Checks if the 'Enter', 'Escape', 'LeftArrow' or 'RightArrow' key is being pressed
+        /// </summary>
+        /// <param name="cpr"></param>
+        /// <param name="indexer"></param>
         public void CheckKeyPress(string cpr, int indexer)
         {
+            // Saves the last pressed key to a ConsoleKey variable so we can compare it to specific keys
             ConsoleKey consoleKey = Console.ReadKey().Key;
 
-            // Checks if a certain key is being pressed i.e 'Enter and 'Escape'
+
+            // If 'Enter' was the key, it calls on the CreateE method
             if (consoleKey.Equals(ConsoleKey.Enter))
             {
                 CreateE();
             }
+            // If 'Escape' was the key, it returns us to the previous menu
             else if (consoleKey.Equals(ConsoleKey.Escape))
             {
                 return;
             }
+            // If 'LeftArrow' was the key, our indexer variable subtracts 1, and shows the previous index
             else if (consoleKey.Equals(ConsoleKey.LeftArrow))
             {
                 Console.Clear();
@@ -216,6 +260,7 @@ namespace Journal_Opgave
                 LoadJ(cpr, indexer);
 
             }
+            // If 'RightArrow' was the key, our indexer variable counts 1 up, and shows the next index
             else if (consoleKey.Equals(ConsoleKey.RightArrow))
             {
                 Console.Clear();

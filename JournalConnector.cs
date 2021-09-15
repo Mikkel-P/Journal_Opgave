@@ -9,22 +9,65 @@ namespace Journal_Opgave
 {
     class JournalConnector
     {
+        // A Journal referance
         Journal currentJournal;
 
         // ctor
         public JournalConnector() { }
 
+        /// <summary>
+        /// Creates a new journal with the attributes from the Journal class
+        /// </summary>
+        /// <param name="jInfo"></param>
         public void JournalCreation(string[] jInfo)
         {
             currentJournal = new Journal(jInfo);
         }
 
+        /// <summary>
+        /// Calls on the method AddJournalEntry from the Journal class, and gives it 2 strings
+        /// returns the result to the currentJournal
+        /// </summary>
+        /// <param name="doctorName"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
         public Journal EntryCreation(string doctorName, string description)
         {
             currentJournal.AddJournalEntry(doctorName, description);
             return currentJournal;
         }
 
+        /// <summary>
+        /// Splits the entry string into a string array, which we loop through to 
+        /// remove unwanted white spaces from the strings.
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="doctorName"></param>
+        /// <param name="description"></param>
+        /// <param name="date"></param>
+        public void EntryStringSplitter(string entry, out string doctorName, out string description, out string date)
+        {
+            // Splits the string to a string array
+            string[] entryInfo = entry.Split('-');
+
+            for (int i = 0; i < entryInfo.Length; i++)
+            {
+                // Removes white spaces at the beginning or end of the string.
+                entryInfo[i] = entryInfo[i].Trim();
+            }
+
+            date = entryInfo[0];
+            doctorName = entryInfo[1];
+            description = entryInfo[2];
+        }
+
+        /// <summary>
+        /// Loops through the entries string array, and calls on the EntryStringSplitter
+        /// method to remove unwanted white spaces from the strings. Then calls on the 
+        /// method AddJournalEntry from the Journal class.
+        /// </summary>
+        /// <param name="entries"></param>
+        /// <returns></returns>
         public Journal AddOldEntries(string[] entries)
         {
             for (int i = 0; i < entries.Length; i++)
@@ -36,27 +79,26 @@ namespace Journal_Opgave
             return currentJournal;
         }
 
-        public void EntryStringSplitter(string entry, out string doctorName, out string description, out string date)
-        {
-            string[] entryInfo = entry.Split('-');
-
-            for (int i = 0; i < entryInfo.Length; i++)
-            {
-                entryInfo[i] = entryInfo[i].Trim();
-            }
-
-            date = entryInfo[0];
-            doctorName = entryInfo[1];
-            description = entryInfo[2];
-        }
-
+        /// <summary>
+        /// Seperates the info from the fileContent array into a list and another array, after
+        /// the information is split, the wanted information is copied to a string array
+        /// </summary>
+        /// <param name="fileContent"></param>
+        /// <param name="journalInfo"></param>
+        /// <param name="entries"></param>
         public void ContentHandler(string[] fileContent, out string[] journalInfo, out string[] entries)
         {
+            // Creates a string array with 6 indexes
             journalInfo = new string[6];
+
+            // Creates an empty string array
             entries = Array.Empty<string>();
 
+            // Creates a list of strings
             List<string> entryList = new List<string>();
 
+            // Loops through the fileContent array, and either adds to the entryList list
+            // or to the journalInfo array depending on the index number
             for (int i = 0; i < fileContent.Length; i++)
             {
                 if (i < 6)
@@ -68,10 +110,19 @@ namespace Journal_Opgave
                     entryList.Add(fileContent[i]);
                 }
             }
+            // Copies the content of the entryList list to the entries string array.
             entries = entryList.ToArray();
         }
 
         #region Age methods
+        /// <summary>
+        /// Breaks the cpr string down, and uses it to calculate a persons exact
+        /// birth date, since the cpr only shows the last 2 numbers of the year
+        /// the person was born in. Rearranges the numbers so it later can be 
+        /// converted to a DateTime format.
+        /// </summary>
+        /// <param name="cpr"></param>
+        /// <returns></returns>
         public string AgeCalculator(string cpr)
         {
             #region CPR Conversion
@@ -211,12 +262,20 @@ namespace Journal_Opgave
             }
         }
 
+        /// <summary>
+        /// Receives a date from the AgeCalculator method and converts it
+        /// to a DateTime variable. Afterwards a new DateTime variable is 
+        /// made that holds the current time, then we compare the two, and
+        /// get a return with the persons age in years and days.
+        /// </summary>
+        /// <param name="cpr"></param>
+        /// <returns></returns>
         public string[] AgeComparer(string cpr)
         {
             // String that copies the return of the AgeCalculator method
             string birthDate = AgeCalculator(cpr);
 
-            // Invariant culture allows to seperate the formatting of DateTime from the OS
+            // Invariant culture allows to seperate the formatting of DateTime from the OS format
             CultureInfo provider = CultureInfo.InvariantCulture;
 
             // DateTime variable from the string we received from the AgeCalculator method

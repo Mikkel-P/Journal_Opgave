@@ -9,10 +9,13 @@ namespace Journal_Opgave
 {
     class JournalEntry
     {
+        #region Attributes, properties and constructor
+        // Attributes
         private DateTime timeOfDay;
         private string doctorName;
         private string description;
 
+        // Properties
         public DateTime TimeOfDay
         {
             get 
@@ -66,5 +69,6 @@ namespace Journal_Opgave
             this.DoctorName = doctorName;
             this.Description = description;
         }
+        #endregion
     }
 }

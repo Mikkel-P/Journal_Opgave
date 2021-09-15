@@ -8,6 +8,7 @@ namespace Journal_Opgave
 {
     class Journal
     {
+        #region Attributes, properties and constructor
         // Attributes
         private string name;
         private string address;
@@ -18,6 +19,7 @@ namespace Journal_Opgave
 
         private List<JournalEntry> jEntry = new List<JournalEntry>();
 
+        // Properties
         public string Name
         {
             get
@@ -107,7 +109,14 @@ namespace Journal_Opgave
             this.Phone = jInfo[4];
             this.PrefDoctor = jInfo[5];
         }
+        #endregion
 
+        /// <summary>
+        /// Adds a JournelEntry object with 3 strings to the JournalEntry list from the Journal class
+        /// </summary>
+        /// <param name="doctorName"></param>
+        /// <param name="description"></param>
+        /// <param name="date"></param>
         public void AddJournalEntry(string doctorName, string description, string date = "")
         {
             this.jEntry.Add(new JournalEntry(doctorName, description, date));

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace Journal_Opgave
 {
@@ -13,12 +14,12 @@ namespace Journal_Opgave
         // ctor
         public Dal() { }
 
-        //private string pathway = @".\HealthClinic";
+        private string pathway = @".\HealthClinic";
 
         public bool JournalCreator(string[] jInfo) 
         {
             // Creates a folder, does nothing if folder by that name already exists
-            Directory.CreateDirectory(@".\HealthClinic");
+            Directory.CreateDirectory(pathway);
 
             string cpr = jInfo[2];
 
@@ -28,7 +29,7 @@ namespace Journal_Opgave
             try
             {
                 // Creates a .txt file with the persons cpr as name
-                patientFile = new FileStream(@".\HealthClinic" + cpr + ".txt", FileMode.CreateNew);
+                patientFile = new FileStream(pathway + @"\" + cpr + ".txt", FileMode.CreateNew);
             }
             catch (IOException)
             {
@@ -42,7 +43,7 @@ namespace Journal_Opgave
                 writer.WriteLine(jInfo[i]);
             }
 
-            writer.WriteLine("\n--------------------------------------------\n");
+            writer.WriteLine("--------------------------------------------");
 
             writer.Close();
 
@@ -51,26 +52,33 @@ namespace Journal_Opgave
 
         public void AddToFile(string cpr, JournalEntry entry)
         {
-            // Allows us to add to the bottom of an existing file
-            StreamWriter writer = new StreamWriter(new FileStream(@".\HealthClinic" + cpr + ".txt", FileMode.Append));
+            FileStream patientFile = new FileStream(pathway + @"\" + cpr + ".txt", FileMode.Append);
 
-            writer.WriteLine($"{entry.TimeOfDay.ToString("yyyy/MM/dd HH:mm")} - {entry.DoctorName} - {entry.Description}");
+            // Allows us to add to the bottom of an existing file
+            StreamWriter writer = new StreamWriter(patientFile);
+
+            // Invariant culture allows to seperate the formatting of DateTime from the OS
+            CultureInfo provider = CultureInfo.InvariantCulture;
+
+            writer.WriteLine($"{entry.TimeOfDay.ToString("yyyy/MM/dd HH:mm", provider)} - {entry.DoctorName} - {entry.Description}");
 
             writer.Close();
         }
 
         public string[] FileLoader(string cpr) 
         {
-            // Reads 
-            StreamReader reader;
+            FileStream patientFile;
+
             try
             {
-                reader = new StreamReader(new FileStream(@".\HealthClinic" + cpr + ".txt", FileMode.Open));
+                patientFile = new FileStream(pathway + @"\" + cpr + ".txt", FileMode.Open);                
             }
             catch (FileNotFoundException)
             {
                 throw;
             }
+
+            StreamReader reader = new StreamReader(patientFile);
 
             List<string> fileList = new List<string>();
 

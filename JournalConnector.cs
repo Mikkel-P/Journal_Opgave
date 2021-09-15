@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Journal_Opgave
 {
@@ -41,8 +42,9 @@ namespace Journal_Opgave
 
             for (int i = 0; i < entryInfo.Length; i++)
             {
-                entryInfo[i].Trim();
+                entryInfo[i] = entryInfo[i].Trim();
             }
+
             date = entryInfo[0];
             doctorName = entryInfo[1];
             description = entryInfo[2];
@@ -82,16 +84,19 @@ namespace Journal_Opgave
                 char num6 = cprCalc[5];
                 char num7 = cprCalc[6];
 
+
+
                 // Converts char num5 and char num6 to strings 
                 string convert1 = Convert.ToString(num5);
                 string convert2 = Convert.ToString(num6);
+                string convert3 = Convert.ToString(num7);
 
                 // Melts the two strings into one
                 string putTogether = convert1 + convert2;
 
-                // Converts the putTogether string and num7 to integers so we can use them in calculations
+                // Converts the putTogether string and convert3 string to integers so we can use them in calculations
                 int finalCalc1 = Convert.ToInt32(putTogether);
-                int finalCalc2 = Convert.ToInt32(num7);
+                int finalCalc2 = Convert.ToInt32(convert3);
                 #endregion
 
                 #region CPR Calculation
@@ -105,28 +110,27 @@ namespace Journal_Opgave
                 {
                     if (finalCalc2 < 4)
                     {
-                        cprCalc[6] = (char)1;
                         // 1900-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                     else if (finalCalc2 == 4)
                     {
                         // 2000-2036
-                        cprCalc[6] = (char)2;
-                        cprCalc[7] = (char)0;
+                        cprCalc[6] = '2';
+                        cprCalc[7] = '0';
                     }
                     else if (finalCalc2 > 4)
                     {
                         // 2000-2057
-                        cprCalc[6] = (char)2;
-                        cprCalc[7] = (char)0;
+                        cprCalc[6] = '2';
+                        cprCalc[7] = '0';
                     }
                     else if (finalCalc2 == 9)
                     {
                         // 2000-2036
-                        cprCalc[6] = (char)2;
-                        cprCalc[7] = (char)0;
+                        cprCalc[6] = '2';
+                        cprCalc[7] = '0';
                     }
                 }
                 else if (finalCalc1 > 36 && finalCalc1 < 58)
@@ -134,14 +138,14 @@ namespace Journal_Opgave
                     if (finalCalc2 < 4)
                     {
                         // 1900-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                     else if (finalCalc2 == 4)
                     {
                         // 1937-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                     else if (finalCalc2 > 4)
                     {
@@ -150,8 +154,8 @@ namespace Journal_Opgave
                     else if (finalCalc2 == 9)
                     {
                         // 1937-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                 }
                 else if (finalCalc1 > 57)
@@ -159,26 +163,26 @@ namespace Journal_Opgave
                     if (finalCalc2 < 4)
                     {
                         // 1900-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                     else if (finalCalc2 == 4)
                     {
                         // 1937-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                     else if (finalCalc2 > 4)
                     {
                         // 1858-1899
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)8;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '8';
                     }
                     else if (finalCalc2 == 9)
                     {
                         // 1937-1999
-                        cprCalc[6] = (char)1;
-                        cprCalc[7] = (char)9;
+                        cprCalc[6] = '1';
+                        cprCalc[7] = '9';
                     }
                 }
                 #endregion
@@ -195,8 +199,10 @@ namespace Journal_Opgave
                 char c7 = cprCalc[6];
                 char c8 = cprCalc[7];
 
+
+
                 // Puts the specified char's back together into a string in the chosen order
-                string exactBirthDate = Convert.ToString(c1 + c2 + c3 + c4 + c7 + c8 + c5 + c6);
+                string exactBirthDate = String.Concat(c1, c2, c3, c4, c7, c8, c5, c6);
 
                 // Returns the cpr with the full birthyear, in a regular date format
                 // so it can be used for comparison later
@@ -210,8 +216,11 @@ namespace Journal_Opgave
             // String that copies the return of the AgeCalculator method
             string birthDate = AgeCalculator(cpr);
 
+            // Invariant culture allows to seperate the formatting of DateTime from the OS
+            CultureInfo provider = CultureInfo.InvariantCulture;
+
             // DateTime variable from the string we received from the AgeCalculator method
-            DateTime birth = DateTime.ParseExact(birthDate, "dd-MM-yyyy", null);
+            DateTime birth = DateTime.ParseExact(birthDate, "ddMMyyyy", provider);
 
             // DateTime variable with the current date and time
             DateTime current = DateTime.Now;
@@ -225,7 +234,7 @@ namespace Journal_Opgave
             // Subtracts the current day from the given birth day and saves it to an int variable
             int days = current.DayOfYear - thisBDay.DayOfYear;
 
-            // Compares the integer variables years and days and returns a -1, 0 or 1 integer
+            // Compares the integer variables years and days and returns a 1, 0 or -1 integer
             // which tells us whether the first instance is before, on or after the given date
             int comparer = DateTime.Compare(current.Date, thisBDay.Date);
 

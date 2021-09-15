@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Journal_Opgave
 {
@@ -49,15 +50,19 @@ namespace Journal_Opgave
         // ctor
         public JournalEntry(string doctorName, string description, string date = "")
         {
+
+
             if (date == "")
             {
                 this.TimeOfDay = DateTime.Now;
             }
             else
             {
-                this.TimeOfDay = DateTime.ParseExact(date, "yyyy/MM/dd HH:mm", null);
+                // Invariant culture allows to seperate the formatting of DateTime from the OS
+                CultureInfo provider = CultureInfo.InvariantCulture;
+                this.TimeOfDay = DateTime.ParseExact(date, "yyyy/MM/dd HH:mm", provider);
             }
-            // Forklar dette
+
             this.DoctorName = doctorName;
             this.Description = description;
         }

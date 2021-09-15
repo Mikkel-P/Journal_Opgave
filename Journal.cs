@@ -16,7 +16,7 @@ namespace Journal_Opgave
         private string phone;
         private string prefDoctor;
 
-        private List<JournalEntry> jEntry;
+        private List<JournalEntry> jEntry = new List<JournalEntry>();
 
         public string Name
         {

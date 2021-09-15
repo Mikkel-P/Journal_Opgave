@@ -63,7 +63,7 @@ namespace Journal_Opgave
                 }
             }
         }
-        
+
         /// <summary>
         /// Creates
         /// </summary>
@@ -100,11 +100,11 @@ namespace Journal_Opgave
             journalDetails[3] = email;
             journalDetails[4] = phone;
             journalDetails[5] = prefDoctor;
-            
+
             // We call our manager class method CreateJournalFile and send our string array to it
             manager.CreateJournalFile(journalDetails);
 
-            LoadJ();
+            LoadJ(cpr);
         }
 
         public void CreateE()
@@ -133,12 +133,12 @@ namespace Journal_Opgave
                     break;
                 }
                 description += line + "\n";
-            }            
+            }
 
             manager.CreateEntry(cpr, doctorName, description);
         }
 
-        public void LoadJ(string cpr = "")
+        public void LoadJ(string cpr = "", int indexer = 0)
         {
             if (cpr == "")
             {
@@ -146,40 +146,81 @@ namespace Journal_Opgave
                 cpr = Console.ReadLine();
             }
 
-            manager.LoadJournalFile(cpr);
-            manager.CurrentAge(cpr);
+            Journal JournalViewer = manager.LoadJournalFile(cpr);
+
+            ShowJournal(JournalViewer);
+            ShowEntry(JournalViewer, indexer);
+            CheckKeyPress(cpr, indexer);
+            Console.ReadLine();
         }
 
         public void journalMenu()
         {
-            // Bool to control the menu
-            bool journalMenu = true;
-            while (journalMenu)
+            Console.Clear();
+            Console.WriteLine("CPR: ");
+            string cpr = Console.ReadLine();
+            LoadJ(cpr);
+        }
+
+        public void ShowJournal(Journal showInfo)
+        {
+            Console.Clear();
+            Console.WriteLine($"Name: {showInfo.Name}");
+            Console.WriteLine($"Address: {showInfo.Address}");
+            Console.WriteLine($"CPR: {showInfo.Cpr}");
+            Console.WriteLine($"Email: {showInfo.Email}");
+            Console.WriteLine($"Phone: {showInfo.Phone}");
+            Console.WriteLine($"Preferred doctor: {showInfo.PrefDoctor}");
+            Console.WriteLine("--------------------------------------------");
+        }
+
+        public void ShowEntry(Journal entryViewer, int e)
+        {
+            if (entryViewer != null && 0 < entryViewer.JEntry.Count)
+            {
+                List<JournalEntry> showEntries = entryViewer.JEntry;
+
+                if (e < showEntries.Count && e >= 0)
+                {
+                    Console.WriteLine($"Doctor: {showEntries[e].DoctorName} - Date: {showEntries[e].TimeOfDay}");
+                    Console.WriteLine($"Description: {showEntries[e].Description}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No entries found.");
+            }
+            Console.WriteLine("-----------------------------------------------");
+
+            Console.Write("Press 'ENTER' key to create a new entry.\nPress 'RIGHT ARROW' key to navigate to next journal entry\nPress 'LEFT ARROW' key to navigate to previous journal entry\nPress 'ESC' key to go to previous menu.\n");
+
+        }
+
+        public void CheckKeyPress(string cpr, int indexer)
+        {
+            ConsoleKey consoleKey = Console.ReadKey().Key;
+
+            // Checks if a certain key is being pressed i.e 'Enter and 'Escape'
+            if (consoleKey.Equals(ConsoleKey.Enter))
+            {
+                CreateE();
+            }
+            else if (consoleKey.Equals(ConsoleKey.Escape))
+            {
+                return;
+            }
+            else if (consoleKey.Equals(ConsoleKey.LeftArrow))
             {
                 Console.Clear();
-                Console.WriteLine("==================================================");
-                Console.WriteLine("               Health Clinic Platform");
-                Console.WriteLine("==================================================\n");
-                Console.WriteLine("1. Create entry");
-                Console.WriteLine("2. Load and view entries");
-                Console.WriteLine("3. Exit");
-                Console.Write("\r\nEnter a number: ");
+                indexer--;
+                LoadJ(cpr, indexer);
 
-                switch (Console.ReadLine())
-                {
-                    case "1":
-                        LoadJ();
-                        CreateE();
-                        break;
-                    case "2":
-                        LoadJ();
-                        break;
-                    case "3":
-                        journalMenu = false;
-                        break;
-                    default:
-                        break;
-                }
+            }
+            else if (consoleKey.Equals(ConsoleKey.RightArrow))
+            {
+                Console.Clear();
+                indexer++;
+                LoadJ(cpr, indexer);
             }
         }
         #endregion
